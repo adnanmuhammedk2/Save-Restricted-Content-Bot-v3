@@ -1,12 +1,23 @@
-# Copyright (c) 2025 devgagan : https://github.com/devgaganin.
-# Licensed under the GNU General Public License v3.0.
-# See LICENSE file in the repository root for full license text.
-
 import asyncio
+import threading
+from flask import Flask
 from shared_client import start_client
 import importlib
 import os
 import sys
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Bot is alive!"
+
+def run_flask():
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port)
+
+async def flask_runner():
+    threading.Thread(target=run_flask, daemon=True).start()
 
 async def load_and_run_plugins():
     await start_client()
@@ -17,7 +28,6 @@ async def load_and_run_plugins():
         try:
             module = importlib.import_module(f"plugins.{plugin}")
             func = getattr(module, f"run_{plugin}_plugin", None)
-
             if callable(func):
                 print(f"🚀 Running {plugin} plugin...")
                 if asyncio.iscoroutinefunction(func):
@@ -25,27 +35,21 @@ async def load_and_run_plugins():
                 else:
                     func()
             else:
-                print(f"⚠️  No valid 'run_{plugin}_plugin' function found in {plugin}.py")
+                print(f"⚠️ No valid 'run_{plugin}_plugin' function in {plugin}.py")
         except Exception as e:
             print(f"❌ Error loading plugin '{plugin}': {e}")
 
 async def main():
     await load_and_run_plugins()
+    await flask_runner()
     while True:
         await asyncio.sleep(1)
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    print("🔄 Starting clients ...")
     try:
-        loop.run_until_complete(main())
+        asyncio.run(main())
     except KeyboardInterrupt:
         print("🛑 Shutting down...")
     except Exception as e:
         print(f"❌ Unhandled error: {e}")
         sys.exit(1)
-    finally:
-        try:
-            loop.close()
-        except Exception:
-            pass
