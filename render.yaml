@@ -1,0 +1,48 @@
+services:
+  - type: worker
+    name: save-restricted-content-bot-v3
+    env: python
+    plan: free
+    region: oregon
+    runtime: python
+    pythonVersion: 3.10
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    autoDeploy: true
+    envVars:
+      - key: API_ID
+        value: YOUR_API_ID
+      - key: API_HASH
+        value: YOUR_API_HASH
+      - key: BOT_TOKEN
+        value: YOUR_BOT_TOKEN
+      - key: MONGO_DB
+        value: YOUR_MONGO_URI
+      - key: OWNER_ID
+        value: "123456789 987654321"  # space separated IDs
+      - key: DB_NAME
+        value: telegram_downloader
+      - key: STRING
+        value: YOUR_USER_SESSION_STRING  # optional
+      - key: LOG_GROUP
+        value: "-1001234456"  # optional
+      - key: FORCE_SUB
+        value: "-10012345567"  # optional
+      - key: MASTER_KEY
+        value: gK8HzLfT9QpViJcYeB5wRa3DmN7P2xUq
+      - key: IV_KEY
+        value: s7Yx5CpVmE3F
+      - key: YT_COOKIES
+        value: |
+          # write here yt cookies
+      - key: INSTA_COOKIES
+        value: |
+          # write up here insta cookies
+      - key: FREEMIUM_LIMIT
+        value: "0"
+      - key: PREMIUM_LIMIT
+        value: "500"
+      - key: JOIN_LINK
+        value: https://t.me/team_spy_pro
+      - key: ADMIN_CONTACT
+        value: https://t.me/username_of_admin
